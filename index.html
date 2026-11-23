@@ -5059,7 +5059,7 @@ function tapStart(){
   if(G.mode==='s3ngo'&&G.t>280){G.mode='title';G.t=0;G.ngoMode=false;G.fade=0;song(19);return true;}
   if(G.mode==='over'&&G.t>60){ST().over++;if(G.overKind==='ride'){G.imo=G.imo0||0;if(G.stage===3)startRide3();else startRide();}else if(G.overKind==='dirt'){G.imo=G.imo0||0;startDirt();}else if(G.overKind==='valley'){retryValley();pauseBtn.hidden=false;}else if(G.overBoss)startBoss();else startChase();G.overKind=null;return true;}
   if(G.mode==='result'&&G.t>90){startS2();return true;}
-  if(G.mode==='s3result'&&G.t>90){G.mode='title';G.t=0;G.overKind=null;G.fade=0;song(19);return true;}
+  if(G.mode==='s3result'&&G.t>90&&!rankHold()){G.mode='title';G.t=0;G.overKind=null;G.fade=0;song(19);return true;}
   if(G.mode==='s2result'&&G.t>90){G.mode='title';G.t=0;G.overKind=null;bgmStop();return true;}
   return false;
 }
@@ -5888,9 +5888,9 @@ async function loadRank(){
   catch(e){RANK.status='ランキングを読み込めませんでした';}
   renderRank();
 }
-function rankStart(){RANK.run=true;RANK.asked=false;RANK.tok='';RANK.status='';const go=n=>rankApi({a:'start'}).then(res=>{if(res&&res.ok)RANK.tok=res.t;else throw 0;}).catch(()=>{if(n>0)setTimeout(()=>go(n-1),4000);});go(2);} // 最初から始めた時の札（これがないと登録できない）
-function rankQualifies(v){ // 通しで遊んでいて、ランキングを読めていて、自己ベスト更新で、10位以内に入る
-  if(!RANK.run||!RANK.ok||!RANK.tok||!(v>0))return false;
+function rankStart(){RANK.run=true;RANK.asked=false;RANK.re=false;RANK.tok='';RANK.status='';const go=n=>rankApi({a:'start'}).then(res=>{if(res&&res.ok)RANK.tok=res.t;else throw 0;}).catch(()=>{if(n>0)setTimeout(()=>go(n-1),4000);});go(2);} // 最初から始めた時の札（これがないと登録できない）
+function rankQualifies(v,ok){ // 通しで遊んでいて、ランキングを読めていて、自己ベスト更新で、10位以内に入る
+  if(!(RANK.run||ok)||!RANK.ok||!RANK.tok||!(v>0))return false;
   const me=RANK.rows.find(r=>r.id===RANK.uid);if(me&&me.v>=v)return false;
   return 1+topImo().filter(r=>r.id!==RANK.uid&&r.v>=v).length<=10;
 }
@@ -5918,10 +5918,15 @@ rankBtn.addEventListener('click',e=>{e.stopPropagation();rkEntry.hidden=true;RAN
 for(const el of [rankEl,rankBtn])for(const ev of ['pointerdown','pointerup'])el.addEventListener(ev,e=>e.stopPropagation());
 rankEl.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing&&!rkEntry.hidden){e.preventDefault();rankSubmit();}if(e.key==='Escape')rankClose();});
 function rankSync(){ // タイトルと最後の結果だけ🏆を出す。結果では10位以内なら名前を聞く
-  const show=G.mode==='title'||(G.mode==='s3result'&&G.t>90);
+  const res=G.mode==='s3result',show=G.mode==='title'||(res&&G.t>=60);
   if(rankBtn.hidden===show)rankBtn.hidden=!show;if(!show&&!rankEl.hidden)rankClose();
-  if(G.mode==='s3result'&&G.t>=62&&!RANK.asked){RANK.asked=true;if(rankQualifies(G.imo||0))rankOpenEntry(G.imo);RANK.run=false;}
+  if(res&&G.t>=62&&!RANK.asked){
+    if(!RANK.run)RANK.asked=true;
+    else if(!RANK.ok||!RANK.tok){if(!RANK.re){RANK.re=true;if(!RANK.ok)loadRank();}if(G.t>480)RANK.asked=true;} // つながるのを少し待つ
+    else{RANK.asked=true;RANK.run=false;if(rankQualifies(G.imo||0,true))rankOpenEntry(G.imo);}
+  }
 }
+const rankHold=()=>G.mode==='s3result'&&RANK.run&&!RANK.asked;
 loadRank();
 clearFx();
 let last=performance.now(),accum=0;
