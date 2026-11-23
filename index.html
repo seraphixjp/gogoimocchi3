@@ -2,7 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>GOGOいもっち3 奪われたイモと巨大いもっち</title>
 <meta name="description" content="奪われた焼きイモを取り返せ！横浜から富士山まで、走って巨大化して戦うドット絵のアクションゲーム。">
 <meta property="og:title" content="GOGOいもっち3 奪われたイモと巨大いもっち">
@@ -4881,7 +4884,7 @@ addEventListener('keydown',e=>{
   if(e.code==='KeyM'){setMute(!MUTED);sndLabel();return;}
   if(e.code==='KeyP'||e.code==='Escape'){if(playing())setPause(!G.paused);return;}
   if(e.code==='KeyT'&&canTT()){toTitle();return;}
-  const n=keyName(e.code);if(n||e.code==='Enter'){e.preventDefault();tryLandscape();}
+  const n=keyName(e.code);if(n||e.code==='Enter')e.preventDefault();
   if(G.paused){if(e.code==='Space'||e.code==='Enter')setPause(false);return;}
   if(e.repeat)return;
   if(e.code==='Enter'||e.code==='Space'){if(tapStart())return;}
@@ -4911,11 +4914,10 @@ function zone(x,y){
   return null;
 }
 function refreshTouch(){const on={};for(const v of ptr.values())if(v)on[v]=true;for(const n in K)if(!on[n])K[n]=false;}
-function tryLandscape(){if(document.fullscreenElement||document.webkitFullscreenElement)return;try{const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;if(rq){const pr=rq.call(el);if(pr&&pr.then)pr.then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})).catch(()=>{});}}catch(e){}}
 addEventListener('pointerdown',e=>{
   if(e.target.closest&&e.target.closest('button,#rank'))return;
   if(!rankEl.hidden){if(rkEntry.hidden)rankClose();return;}
-  e.preventDefault();tryLandscape();try{audio();}catch(_){}
+  e.preventDefault();try{audio();}catch(_){}
   {const [x,y]=toGame(e);if(canTT()&&inTTB(x,y)){toTitle();return;}}
   if(G.paused){setPause(false);return;}
   const [x,y]=toGame(e);
@@ -4931,6 +4933,9 @@ addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId)||G.mode!=='boss')ret
 const up=e=>{if(ptr.delete(e.pointerId))refreshTouch();};
 addEventListener('pointerup',up);addEventListener('pointercancel',up);
 addEventListener('contextmenu',e=>e.preventDefault());
+let fsN=0;function tryFull(){if(/shot=/.test(location.hash)||document.fullscreenElement||document.webkitFullscreenElement)return;fsN++;try{const el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;if(!rq)return;const go=o=>{const pr=rq.call(el,o);if(pr&&pr.then)pr.then(()=>{try{const L=screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape');if(L&&L.catch)L.catch(()=>{});}catch(e){}}).catch(()=>{});};go({navigationUI:'hide'});}catch(e){}}
+for(const ev of ['pointerdown','pointerup','touchend','click','keydown'])addEventListener(ev,e=>{if(ev==='keydown'&&(e.code==='Escape'||e.key==='F11'||e.repeat||/INPUT/.test((e.target&&e.target.tagName)||'')))return;if(e.target&&e.target.closest&&e.target.closest('input'))return;tryFull();},{capture:true,passive:true});
+for(const ev of ['fullscreenchange','webkitfullscreenchange','orientationchange'])addEventListener(ev,()=>{resize();setTimeout(resize,120);setTimeout(resize,420);});
 const sndBtn=document.getElementById('snd'),pauseBtn=document.getElementById('pauseBtn');
 function sndLabel(){sndBtn.classList.toggle('off',MUTED);}
 sndBtn.addEventListener('click',()=>{setMute(!MUTED);sndLabel();sndBtn.blur();});sndLabel();
