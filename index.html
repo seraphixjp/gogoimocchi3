@@ -5133,8 +5133,8 @@ function guGrow(t){const k=ease(t/84),sc=1.4+3.0*k,fy=BGY+20,hy=fy-150*sc,cam=ea
   if(t>30){guCloud(H-34,t,Math.min(0.9,(t-30)/30),2);guCloud(H-8,t+90,Math.min(1,(t-30)/30),3);}
   ctx.save();ctx.globalCompositeOperation='lighter';for(let i=0;i<30;i++){const x=(i*53)%W,y=((i*71+t*(10+i%4*3))%(H+120))-60;ctx.fillStyle='rgba(230,190,255,.16)';ctx.fillRect(x,y,1.4,60+(i%3)*30);}if(t>70&&t<100){const f=Math.sin((t-70)/30*3.14);kglow(W/2-43,117,44*f,'rgba(255,255,255,.95)','rgba(210,90,255,0)');kglow(W/2+42,117,44*f,'rgba(255,255,255,.95)','rgba(210,90,255,0)');}ctx.restore();}
 function guGrab(t){const U=GU,q=t-U.grab,in0=ease(q/34),up=Math.max(0,(t-U.lift)/(U.face-U.lift)),pull=q<40?0:Math.min(1,(q-40)/28),sh=q>40?4:1.5;ctx.save();ctx.translate(rnd(-sh,sh),rnd(-sh,sh)*0.6);guSky(0,0.12);
-  const px=W/2,py=482-66*in0,s=2.3,uh=(pull*14+up*up*44)/s;G2POSE.grab.h=[[-50-14*(1-in0),-86-uh],[50+14*(1-in0),-86-uh]];drawGPine(px,py,false,s,'grab',{still:true,key:'gub',part:'noarms',aura:true});
-  const fy=238-pull*14-up*up*44+(pull>0&&up<=0?rnd(-2,2):0),rot=pull>0?Math.sin(t*0.5)*0.014*(1-up):0;
+  const px=W/2,py=482-66*in0-up*up*12,s=2.3,uh=(pull*10+up*up*12)/s;G2POSE.grab.h=[[-54-14*(1-in0),-78-uh],[54+14*(1-in0),-78-uh]];drawGPine(px,py,false,s,'grab',{still:true,key:'gub',part:'noarms',aura:true});
+  const fy=238-pull*10-up*up*24+(pull>0&&up<=0?rnd(-2,2):0),rot=pull>0?Math.sin(t*0.5)*0.014*(1-up):0;
   if(up>0){ctx.save();ctx.globalCompositeOperation='lighter';kglow(W/2,238,150,`rgba(255,120,30,${0.8*up})`,'rgba(255,40,0,0)');ctx.restore();ctx.fillStyle='#2a0c08';ctx.beginPath();ctx.ellipse(W/2,236,132,16,0,0,7);ctx.fill();ctx.fillStyle='#ff7a1a';ctx.beginPath();ctx.ellipse(W/2,237,114,10,0,0,7);ctx.fill();ctx.fillStyle='#fff0a0';ctx.beginPath();ctx.ellipse(W/2,238,74,5,0,0,7);ctx.fill();}
   guFuji(GUF.a,W/2,fy,0.3,rot);
   if(pull>0&&up<0.3){ctx.save();ctx.globalCompositeOperation='lighter';for(let i=0;i<9;i++){const x=W/2+(i-4)*30;duBolt(x-16,236,x+18,238-6*pull,i*31+(t>>2),8,[[5,'rgba(255,110,20,.7)'],[1.8,'#fff0b0']]);}ctx.restore();}
