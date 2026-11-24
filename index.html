@@ -5412,10 +5412,6 @@ addEventListener('keydown',e=>{
   if(e.code==='Enter'||e.code==='Space'){if(tapStart())return;}
   if(e.code==='Digit6'&&G.mode==='title'&&GOLDM===7){startNgoMode();return;}
   if(e.code==='Enter'&&G.mode==='s3roll'){toS3Result();return;}
-  if(e.code==='Digit4'&&G.mode==='title'){G.imo=0;startS3();return;}
-  if(e.code==='Digit5'&&G.mode==='title'){newGame();G.imo=40;startBoss('dp');return;}
-  if(e.code==='Digit3'&&G.mode==='title'){newGame();G.imo=30;startBoss('ngo');return;}
-  if(e.code==='Digit2'&&G.mode==='title'){G.imo=0;startS2();return;}
   if(e.code==='Enter'&&inScene()){skipScene();return;}
   if(n)pressKey(n);
 });
@@ -5447,12 +5443,8 @@ addEventListener('pointerdown',e=>{
   {const [x,y]=toGame(e);if(canTT()&&inTTB(x,y)){toTitle();return;}}
   if(G.paused){setPause(false);return;}
   const [x,y]=toGame(e);
-  if(G.mode==='title'&&GOLDM===7&&x>W-130&&y>H-134&&y<=H-110){startNgoMode();return;}
+  if(G.mode==='title'&&GOLDM===7&&x>W-118&&y>H-34){startNgoMode();return;}
   if(G.mode==='s3roll'&&y<34&&x>W-170&&x<W-74){toS3Result();return;}
-  if(G.mode==='title'&&x>W-130&&y>H-110&&y<=H-86){newGame();G.imo=40;startBoss('dp');return;}
-  if(G.mode==='title'&&x>W-130&&y>H-86&&y<=H-62){G.imo=0;startS3();return;}
-  if(G.mode==='title'&&x>W-130&&y>H-62&&y<=H-38){G.imo=30;newGame();G.imo=30;startBoss('ngo');return;}
-  if(G.mode==='title'&&x>W-130&&y>H-38){G.imo=0;startS2();return;}
   if(tapStart())return;
   if(inScene()&&x>W-100&&y>14&&y<50){skipScene();return;}
   if(e.pointerType==='touch')G.touch=true;
@@ -6174,15 +6166,12 @@ function drawTitle(){
   for(let i=0;i<14;i++){const x=i*37-6+(i%3)*6,n=i%4;drawB(bset('tt'+n,()=>mkConifer(80+n,50+n*7,'#120c1c','rgba(255,50,90,.55)')),x,H+16+(i%3)*5);}
   ctx.save();ctx.globalCompositeOperation='lighter';for(let i=0;i<40;i++){const x=((i*97+e*(0.2+(i%5)*0.1))%(W+40))-20,y=H-((i*53+e*(0.5+(i%4)*0.22))%(H+30));ctx.fillStyle=['rgba(255,70,60,.8)','rgba(200,60,255,.7)','rgba(255,190,120,.7)'][i%3];const z=0.5+(i%3)*0.4;ctx.beginPath();ctx.arc(x+Math.sin(e*0.03+i)*5,y,z,0,7);ctx.fill();}ctx.restore();
   const q=Math.min(1,t/13),ls=t<13?2.6-1.6*q*q:1+0.02*Math.sin((t-13)*0.7)*Math.max(0,1-(t-13)/24)+0.006*Math.sin(e*0.04),LW=330,LH=165;if(t===13){G.shake=14;G.flash=8;}
-  if(LOGO_IMG.complete&&LOGO_IMG.naturalWidth){ctx.save();ctx.globalAlpha=Math.min(1,t/6+0.1);ctx.translate(W/2-48,180);ctx.scale(ls,ls);ctx.imageSmoothingEnabled=true;ctx.drawImage(LOGO_IMG,-LW/2,-LH/2,LW,LH);
+  if(LOGO_IMG.complete&&LOGO_IMG.naturalWidth){ctx.save();ctx.globalAlpha=Math.min(1,t/6+0.1);ctx.translate(W/2,180);ctx.scale(ls,ls);ctx.imageSmoothingEnabled=true;ctx.drawImage(LOGO_IMG,-LW/2,-LH/2,LW,LH);
     const p=(e%230)-20;if(p>=0&&p<44&&t>30){if(!LOGO_S){LOGO_S=document.createElement('canvas');LOGO_S.width=768;LOGO_S.height=384;}const h=LOGO_S.getContext('2d');h.globalCompositeOperation='source-over';h.clearRect(0,0,768,384);h.drawImage(LOGO_IMG,0,0,768,384);h.globalCompositeOperation='source-in';const X=-160+p*26,z=h.createLinearGradient(X,0,X+150,60);z.addColorStop(0,'rgba(255,255,255,0)');z.addColorStop(0.5,'rgba(255,255,255,.75)');z.addColorStop(1,'rgba(255,255,255,0)');h.fillStyle=z;h.fillRect(0,0,768,384);ctx.globalCompositeOperation='lighter';ctx.drawImage(LOGO_S,-LW/2,-LH/2,LW,LH);}
     ctx.imageSmoothingEnabled=false;ctx.restore();}
   else txt('GOGOいもっち3',W/2,70,40,'#ffd21a','center');
-  if(t>30&&((G.time/30)|0)%2)txt(isTouch()?'タップでスタート':'SPACE / クリックでスタート',W/2-48,H-7,12,'#ffffff','center');
-  for(const [y,s,c] of [[H-106,'ラスボスから'+(isTouch()?'':'（5）'),'#ff9a6a'],[H-82,'STAGE 3 から'+(isTouch()?'':'（4）'),'#ffd27a']]){ctx.fillStyle='rgba(48,24,8,.8)';ctx.fillRect(W-122,y,114,20);ctx.strokeStyle=c;ctx.lineWidth=1.2;ctx.strokeRect(W-122,y,114,20);txt(s,W-65,y+10,11,c,'center');}
-  ctx.fillStyle='rgba(40,8,48,.75)';ctx.fillRect(W-122,H-58,114,20);ctx.strokeStyle='#ff8af0';ctx.lineWidth=1.2;ctx.strokeRect(W-122,H-58,114,20);txt('STAGE 2 ボス'+(isTouch()?'':'（3）'),W-65,H-48,11,'#ff8af0','center');
-  ctx.fillStyle='rgba(10,16,48,.75)';ctx.fillRect(W-122,H-34,114,20);ctx.strokeStyle='#8fd0ff';ctx.lineWidth=1.2;ctx.strokeRect(W-122,H-34,114,20);txt('STAGE 2 から'+(isTouch()?'':'（2）'),W-65,H-24,11,'#8fd0ff','center');
-  if(GOLDM===7){ctx.fillStyle='rgba(60,40,0,.85)';ctx.fillRect(W-122,H-130,114,20);ctx.strokeStyle='#ffe14d';ctx.lineWidth=1.2;ctx.strokeRect(W-122,H-130,114,20);txt('NGOモード'+(isTouch()?'':'（6）'),W-65,H-120,11,'#ffe14d','center');}
+  if(t>30&&((G.time/30)|0)%2)txt(isTouch()?'タップでスタート':'SPACE / クリックでスタート',W/2,H-7,12,'#ffffff','center');
+  if(GOLDM===7){ctx.fillStyle='rgba(60,40,0,.85)';ctx.fillRect(W-110,H-27,104,20);ctx.strokeStyle='#ffe14d';ctx.lineWidth=1.2;ctx.strokeRect(W-110,H-27,104,20);txt('NGOモード'+(isTouch()?'':'（6）'),W-58,H-17,11,'#ffe14d','center');}
   txt('金の芋 '+goldN()+' / 3',8,H-8,9,'#ffe14d');
 }
 const TTB={x:W/2-62,y:H-46,w:124,h:26},inTTB=(x,y)=>x>TTB.x-6&&x<TTB.x+TTB.w+6&&y>TTB.y-4&&y<TTB.y+TTB.h+8,canTT=()=>G.paused||(G.mode==='over'&&G.t>60);
