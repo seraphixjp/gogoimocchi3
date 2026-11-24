@@ -5709,8 +5709,10 @@ function chaseUpdate(){
 }
 function carTop3(c,x0,x1){let t=Infinity;const a=Math.max(0,Math.floor(x0-c.x)),b=Math.min(c.w-1,Math.ceil(x1-c.x));for(let i=a;i<=b;i++)t=Math.min(t,c.spr.top[i]);return isFinite(t)?GROUND-c.h+PAD+t:Infinity;}
 
-function startDrop(){G.p.board=0;G.ce=[];G.mode='drop';G.t=0;G.objs=[];G.cars=[];G.dp='angry';G.p.y=GROUND-FOOT;G.p.on=true;G.p.inv=0;G.p.hurtT=0;G.cone=null;G.gold=null;G.big=0;G.say=[];G.yo=null;G.grbX=-200;G.eat=false;G.vv=chaseV();song(5);pauseBtn.hidden=false;}
+const KCARD=120;
+function startDrop(){G.kc=0;G.p.board=0;G.ce=[];G.mode='drop';G.t=0;G.objs=[];G.cars=[];G.dp='angry';G.p.y=GROUND-FOOT;G.p.on=true;G.p.inv=0;G.p.hurtT=0;G.cone=null;G.gold=null;G.big=0;G.say=[];G.yo=null;G.grbX=-200;G.eat=false;G.vv=chaseV();song(5);pauseBtn.hidden=false;}
 function dropUpdate(){
+  if(G.kc>0){G.kc--;G.t--;return;} // ロボク〇コの名札：この間は場面が止まる
   const t=G.t,p=G.p;
   if(t<90){G.vv*=0.965;G.truckX+=(262-G.truckX)*0.05;}else if(t<560){G.vv*=0.9;if(G.vv<0.06)G.vv=0;}
   G.d+=G.vv;G.roll+=G.vv*0.1;if(G.vv>0.3)p.anim++;
@@ -5723,9 +5725,10 @@ function dropUpdate(){
   if(t===300){G.dp='point';say('dp','ちっちゃいんで、盛っときますね～',130);sfx3('charge');}
   if(t===340){sfx3('grow');song(10);}
   if(t>=340&&t<460){G.cone.sc=Math.min(1,Math.floor((t-340)/40+1)/3+(((t-340)%40)<6?0.08:0)-0.02);G.shake=4;if(t%6===0){smoke(G.cone.x+rnd(-30,30),GROUND,3);burst(G.cone.x,GROUND-40,['#c060ff','#7a2aa8'],4,3);}}
-  if(t===460){G.cone.sc=1;G.shake=20;sfx3('roar');say('cone','オハライ、開始シマス',100);}
-  if(t===480){G.dp='laugh';}
-  if(t===500)say('imo','でっか！！',80,true);
+  if(t===460){G.cone.sc=1;G.shake=20;sfx3('roar');}
+  if(t===478){G.kc=KCARD;G.say=[];sfx3('cutin');sfx3('bell');}
+  if(t===480){G.dp='laugh';say('cone','オハライ、開始シマス',95);}
+  if(t===520)say('imo','でっか！！',62,true);
   if(t>560){G.truckX+=Math.min(4,(t-560)*0.07);G.roll+=0.3;}
   if(t===575)say('dp','じゃ、負けてもいいんで時間かせいでくださ～い',90);
   if(t===660)say('imo','どうすんだよ、これ…',70);
@@ -6021,6 +6024,7 @@ function drawDrop(){
   if(G.gold){const g=G.gold;if(g.held)drawGold(G.p.x+38,G.p.y+14,G.time);else drawGold(g.x,g.y,G.time);}
   drawImoSmall();fxDraw();drawSays();
   if(t>=60&&t<200)txt('※トラックは町内を一周しました',W/2,H-12,10,'#ffffff','center');
+  if(G.kc>0)formCard(KCARD-G.kc,KCARD,'改造巫女型ロボット','ロボク〇コ','#a8281a',()=>drawKusuAt(118,292,false,1.3,'roar',{key:'kcard',still:true}));
   if(t<1567)skipHint();
 }
 function old_drawGiant(){
