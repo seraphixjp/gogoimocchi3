@@ -5554,13 +5554,14 @@ function imRay(){const B=G.B;if(!B.ray||G.mode!=='boss')return;const ex=B.x+B.fa
 function drawImCut(){const B=G.B;if(!(B&&isIm()&&G.mode==='boss'&&B.st==='ult'&&B.ic>0))return;const t=74-B.ic,k=Math.min(1,t/8),o=B.ic<8?B.ic/8:1,h=120*k*o,y=H/2-6;ctx.fillStyle=`rgba(12,0,0,${0.66*o})`;ctx.fillRect(-6,-6,W+12,H+12);ctx.save();ctx.beginPath();ctx.moveTo(0,y-h/2-8);ctx.lineTo(W,y-h/2+10);ctx.lineTo(W,y+h/2+8);ctx.lineTo(0,y+h/2-10);ctx.closePath();ctx.clip();const g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,'#ffb060');g.addColorStop(0.5,'#e0301a');g.addColorStop(1,'#5a0608');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle='rgba(255,230,180,.32)';for(let i=0;i<26;i++){const X=((i*47+t*26)%(W+160))-100;ctx.fillRect(X,y-60+((i*37)%120),60+(i%4)*26,1.6);}
   ctx.save();ctx.translate(W-110+(1-k)*260-t*0.3,y+92);ctx.scale(3.5,3.5);const q=Math.max(0,Math.min(1,(t-14)/18));im2Head(t>40?'roar':'front',{glow:q,red:true});ctx.restore();ctx.restore();
   ctx.save();ctx.translate(146-(1-k)*260,y);ctx.rotate(0.05);txt('真・',-74,-26,26,'#ffe14d','center');txt('ボクサーパンチ',6,14,30,'#ffffff','center');ctx.restore();}
+function startImTest(){startNgoMode();bgmStop();G.say=[];startImIn();}
 function startImIn(){G.mode='imin';G.t=0;G.bossId='imo';G.tr=null;G.say=[];G.band=null;G.fade=0;G.shots=[];G.waves=[];G.drops=[];G.nuts=[];G.hitstop=0;G.zc=1;G.lz=null;const P=G.P;P.atk=null;P.boom=null;P.nut=0;P.inv=0;P.hurt=0;P.vx=0;G.B={x:364,y:-200,vx:0,vy:0,face:-1,hp:1,max:1,st:'in',t:0,flash:0,pose:'jump',gone:true,stunCd:0,cnt:0};G.imHold=0;pauseBtn.hidden=false;}
 function imInUpdate(){const t=G.t,P=G.P,B=G.B,T=IMT;if(P.y<BGY){P.vy+=0.4;P.y=Math.min(BGY,P.y+P.vy);}P.on=P.y>=BGY;P.x+=(116-P.x)*0.05;P.face=1;P.vx=0;G.coneHead=t<T.face?[300,66]:[B.x,B.y-172];
   if(t===24){G.imHold=1;say('ngop','あ、芋が1本余ってますね',90);sfx3('ding');}
   if(t===124)say('ngop','いただきます！',46,true);
   if(t===150||t===168){sfx3('eat');burst(P.x+30,P.y-104,['#f2c23a','#8a2a5a'],8,2);}
   if(t===172){G.imHold=0;say('ngop','うまいです！',56);}
-  if(t===190)bgmStop();if(t===T.sp-6)song(22);if(t>190)duStep(2);
+  if(t===190)bgmStop();if(t===T.sp-6)song(22);if(t>190)duStep(2);if(t>6&&t%4===0)im2Step();
   if(t===T.sp){G.say=[];G.flash=14;sfx3('phone');}
   if(t===T.sp+34||t===T.sp+58||t===T.sp+82)sfx3('alert');
   if(t===T.sp+100)say('imob','オレの…最後の…',60);if(t===T.sp+162)say('imob','一本を…',50);
@@ -5734,6 +5735,7 @@ addEventListener('keydown',e=>{
   if(G.paused){if(e.code==='Space'||e.code==='Enter')setPause(false);return;}
   if(e.repeat)return;
   if(e.code==='Enter'||e.code==='Space'){if(tapStart())return;}
+  if(e.code==='Digit7'&&G.mode==='title'){startImTest();return;}
   if(e.code==='Digit6'&&G.mode==='title'&&GOLDM===7){startNgoMode();return;}
   if(e.code==='Enter'&&G.mode==='s3roll'){toS3Result();return;}
   if(e.code==='Enter'&&inScene()){skipScene();return;}
@@ -5767,6 +5769,7 @@ addEventListener('pointerdown',e=>{
   {const [x,y]=toGame(e);if(canTT()&&inTTB(x,y)){toTitle();return;}}
   if(G.paused){setPause(false);return;}
   const [x,y]=toGame(e);
+  if(G.mode==='title'&&x>W-130&&y>H-160&&y<H-134){startImTest();return;}
   if(G.mode==='title'&&GOLDM===7&&x>W-118&&y>H-34){startNgoMode();return;}
   if(G.mode==='s3roll'&&y<34&&x>W-170&&x<W-74){toS3Result();return;}
   if(tapStart())return;
@@ -6503,6 +6506,7 @@ function drawTitle(){
   else txt('GOGOいもっち3',W/2,70,40,'#ffd21a','center');
   if(t>30&&((G.time/30)|0)%2)txt(isTouch()?'タップでスタート':'SPACE / クリックでスタート',W/2,H-7,12,'#ffffff','center');
   if(GOLDM===7){ctx.fillStyle='rgba(60,40,0,.85)';ctx.fillRect(W-110,H-27,104,20);ctx.strokeStyle='#ffe14d';ctx.lineWidth=1.2;ctx.strokeRect(W-110,H-27,104,20);txt('NGOモード'+(isTouch()?'':'（6）'),W-58,H-17,11,'#ffe14d','center');}
+  ctx.fillStyle='rgba(60,0,8,.88)';ctx.fillRect(W-122,H-156,114,20);ctx.strokeStyle='#ff5a4a';ctx.lineWidth=1.2;ctx.strokeRect(W-122,H-156,114,20);txt('隠しボスから'+(isTouch()?'':'（7）'),W-65,H-146,11,'#ff9a8a','center');
   txt('金の芋 '+goldN()+' / 3',8,H-8,9,'#ffe14d');
 }
 const TTB={x:W/2-62,y:H-46,w:124,h:26},inTTB=(x,y)=>x>TTB.x-6&&x<TTB.x+TTB.w+6&&y>TTB.y-4&&y<TTB.y+TTB.h+8,canTT=()=>G.paused||(G.mode==='over'&&G.t>60);
