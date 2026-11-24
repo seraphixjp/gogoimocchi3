@@ -5514,10 +5514,10 @@ function bossAI4(){const P=G.P,B=G.B;B.t++;if(B.flash>0)B.flash--;if(B.stunCd>0)
   else if(B.st==='eat'){if(t===1){face();say('imob','ちょっと一本…',60);B.uHp=B.hp;}B.pose='eat';B.vul=true;if(t%18===9){sfx3('eat');burst(B.x+B.face*24,B.y-98,['#f2c23a','#8a2a5a'],5,1.6);}
     if(B.uHp-B.hp>=11){B.vul=false;say('imob','あっ！ イモがーーー！！',80,true);G.drops.push({x:B.x,y:B.y-90,vx:(P.x-B.x)*0.02,vy:-6,small:true});B.st='stun';B.t=0;B.stunN=80;}
     else if(t>96){B.vul=false;const h=B.max*0.07;B.hp=Math.min(B.max,B.hp+h);snd('heal');addText(B.x,B.y-160,'イモで回復された！','#ff8a6a',13);G.bhp=B.hp;setB('idle');}}
-  else if(B.st==='ult'){ // 真・ボクサーパンチ：溜めの間に18ダメージで止まる。止められないとムービー→最大体力の3割（1は残る）
+  else if(B.st==='ult'){ // 真・ボクサーパンチ：1回目は必ず発動。2回目（B.ib1）は溜めの間に18ダメージで止まる。止められないとムービー→最大体力の3割（1は残る）
     if(B.ic>0){B.ic--;B.t=0;return;}
-    const w=126;B.mv=0;face();B.pose='uch';B.shk=t>30;if(t===1){sfx3('gather');addText(B.x,B.y-165,'溜めを止めろ！',"#ffe14d",15);}G.shake=Math.max(G.shake,1+t*0.05);if(t%15===0)sfx3('heart');if(t===50||t===92)sfx3('grow');if(t===80)sfx3('thunder');
-    if(B.uHp-B.hp>=18){say('imob','うわっ、腹が鳴った！',70,true);sfx3('crack');burst(B.x-B.face*20,B.y-70,['#ffb030','#ff5a2a','#fff'],20,4);B.shk=false;B.st='stun';B.t=0;B.stunN=140;return;}
+    const w=126;B.mv=0;face();B.pose='uch';B.shk=t>30;if(t===1){sfx3('gather');addText(B.x,B.y-190,B.ib1?'溜めを止めろ！':'止められない…耐えろ！',B.ib1?"#ffe14d":"#ff6a5a",15);}G.shake=Math.max(G.shake,1+t*0.05);if(t%15===0)sfx3('heart');if(t===50||t===92)sfx3('grow');if(t===80)sfx3('thunder');
+    if(B.ib1&&B.uHp-B.hp>=18){say('imob','うわっ、腹が鳴った！',70,true);sfx3('crack');burst(B.x-B.face*20,B.y-70,['#ffb030','#ff5a2a','#fff'],20,4);B.shk=false;B.st='stun';B.t=0;B.stunN=140;return;}
     if(t>=w){B.shk=false;startIb();return;}}
   else if(B.st==='tired'||B.st==='rest'){B.pose='crouch';B.vul=t<26;if(t===4&&Math.random()<0.5)say('imob',pick(['はぁ…はぁ…','腹…減った…','ちょ、タイム']),50);if(t>(B.st==='rest'?24:34*fast)){B.vul=false;setB('idle');}}
   else if(B.st==='stun'){B.pose='stun';B.shk=false;B.ray=0;B.vul=true;if(B.y<BGY)B.y=Math.min(BGY,B.y+7);if(t>(B.stunN||84)){B.vul=false;B.stunN=0;B.broken=0;setB('idle');}}
@@ -5586,7 +5586,7 @@ function imFace(u){const k=Math.min(1,u/7),big=u>42;ctx.save();const g=ctx.creat
   if(u>24&&u<42){const q=(u-24)/18;ctx.save();ctx.globalCompositeOperation='lighter';for(const x of [W/2-46,W/2+42])for(const [a,l] of [[0,1],[1.57,0.7],[0.78,0.4],[2.36,0.4]]){ctx.save();ctx.translate(x,172);ctx.rotate(a+q*0.4);ctx.fillStyle=`rgba(255,240,210,${1-q})`;const L=120*l;ctx.beginPath();ctx.moveTo(-L,0);ctx.lineTo(0,-2.6);ctx.lineTo(L,0);ctx.lineTo(0,2.6);ctx.fill();ctx.restore();}ctx.restore();}
   if(big){const p=1+Math.max(0,0.8-(u-42)*0.12);ctx.save();ctx.translate(W/2+rnd(-1,1),30);ctx.rotate(-0.04);ctx.scale(p,p);txt('食ったなーーーー！！',0,0,30,'#ffe14d','center');ctx.restore();}}
 const IB={star:64,clench:148,face:186,step:234,fist:268,stop:292,hit:322,burst:378,out:408,far:466,boom:524,after:632,end:706};
-function startIb(){const P=G.P,B=G.B;G.ib={t:0,dir:B.x<=P.x?1:-1};G.shots=[];G.waves=[];G.say=[];G.texts=[];G.hitstop=0;P.atk=null;P.boom=null;P.nut=0;P.hurt=0;P.inv=0;G.nuts=[];sfx3('whiff');}
+function startIb(){const P=G.P,B=G.B;B.ib1=1;G.ib={t:0,dir:B.x<=P.x?1:-1};G.shots=[];G.waves=[];G.say=[];G.texts=[];G.hitstop=0;P.atk=null;P.boom=null;P.nut=0;P.hurt=0;P.inv=0;G.nuts=[];sfx3('whiff');}
 function imLines(x,y,n,c,u){for(let i=0;i<n;i++){const a=i*6.283/n+((i*7)%5)*0.03,r0=90+((i*37+u*9)%70);ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x+Math.cos(a)*r0,y+Math.sin(a)*r0);ctx.lineTo(x+Math.cos(a-0.02)*720,y+Math.sin(a-0.02)*720);ctx.lineTo(x+Math.cos(a+0.02)*720,y+Math.sin(a+0.02)*720);ctx.fill();}}
 const imNgo=(x,y,s,rot)=>{ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.scale(s,s);ctx.translate(0,62);drawNgoAt(0,0,false,NGO.goodHurt||NGO.hurt,HANDS.hurt||HANDS.stun,{sc:0.92,blade:false});ctx.restore();};
 let IMSIL=null;
@@ -6222,7 +6222,7 @@ function drawImpacts(){ // 命中の火花：星形・輪・擬音
 }
 function bossHit(dmg,dir,heavy,x,y){
   const B=G.B;if(B.hp<=0||B.st==='intro')return false;
-  if(G.tr||B.st==='tr')return false;const m=B.st==='refuel'?1.8:B.st==='stun'||B.vul?1.5:1;B.hp=Math.max(0,B.hp-dmg*m);B.flash=heavy?10:5;
+  if(G.tr||B.st==='tr')return false;const m=B.st==='refuel'?1.8:B.st==='stun'||B.vul?1.5:1;B.hp=Math.max(isIm()&&!B.ib1?B.max*0.25:0,B.hp-dmg*m);B.flash=heavy?10:5;
   if(heavy&&B.st!=='drill'&&B.st!=='thrust'&&B.st!=='charge'&&B.y>=BGY-2)B.x+=dir*9;
   burst(x,y,['#ffe14d','#fff','#ff8f4a'],heavy?14:6,heavy?4.2:2.8);
   if(B.hp<=0)startWin();
