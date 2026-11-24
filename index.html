@@ -6506,7 +6506,6 @@ function drawTitle(){
   else txt('GOGOいもっち3',W/2,70,40,'#ffd21a','center');
   if(t>30&&((G.time/30)|0)%2)txt(isTouch()?'タップでスタート':'SPACE / クリックでスタート',W/2,H-7,12,'#ffffff','center');
   if(GOLDM===7){ctx.fillStyle='rgba(60,40,0,.85)';ctx.fillRect(W-110,H-27,104,20);ctx.strokeStyle='#ffe14d';ctx.lineWidth=1.2;ctx.strokeRect(W-110,H-27,104,20);txt('NGOモード'+(isTouch()?'':'（6）'),W-58,H-17,11,'#ffe14d','center');}
-  ctx.fillStyle='rgba(60,0,8,.88)';ctx.fillRect(W-122,H-156,114,20);ctx.strokeStyle='#ff5a4a';ctx.lineWidth=1.2;ctx.strokeRect(W-122,H-156,114,20);txt('隠しボスから'+(isTouch()?'':'（7）'),W-65,H-146,11,'#ff9a8a','center');
   txt('金の芋 '+goldN()+' / 3',8,H-8,9,'#ffe14d');
 }
 const TTB={x:W/2-62,y:H-46,w:124,h:26},inTTB=(x,y)=>x>TTB.x-6&&x<TTB.x+TTB.w+6&&y>TTB.y-4&&y<TTB.y+TTB.h+8,canTT=()=>G.paused||(G.mode==='over'&&G.t>60);
