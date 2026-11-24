@@ -5769,7 +5769,7 @@ addEventListener('pointerdown',e=>{
   {const [x,y]=toGame(e);if(canTT()&&inTTB(x,y)){toTitle();return;}}
   if(G.paused){setPause(false);return;}
   const [x,y]=toGame(e);
-  if(G.mode==='title'&&x>W-130&&y>H-160&&y<H-134){startImTest();return;}
+  if(G.mode==='title'&&x>W-118&&y>H-74&&(GOLDM!==7||y<=H-34)){startImTest();return;}
   if(G.mode==='title'&&GOLDM===7&&x>W-118&&y>H-34){startNgoMode();return;}
   if(G.mode==='s3roll'&&y<34&&x>W-170&&x<W-74){toS3Result();return;}
   if(tapStart())return;
